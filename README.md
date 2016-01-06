@@ -4,3 +4,4 @@
 # Todo
 
 - implement subcalendar selection.
+- test out tomorrow with time modif etc.
