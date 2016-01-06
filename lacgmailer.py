@@ -90,12 +90,12 @@ def send_email(serviceMail,tomorrow,start,place,title,abstract):
 		place = ' in ' + place
 	if abstract != '':
 		abstract = "\nThe abstract is below:\n\n" + abstract
-	
+
 	sender = "Your friendly LACG mailbot"
 	recipient = WHERE_DOES_THE_MAIL_GO_TO
 	subject = subject_tag + ' ' + title
 	body = "Dear LACG members,\n\n" + body_tag + ' we will have a talk' + place + ' at ' + time + ' by ' + title + dotorbang + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
-	
+
 	gmail_message = CreateMessage(sender,recipient,subject,body)
 	return SendMessage(serviceMail,'me',gmail_message)
 
@@ -107,19 +107,19 @@ def main():
 	now = datetime.datetime.today()
 	today = datetime.date(now.year,now.month,now.day) #rounded down, i.e. 00:00 in the morning!
 	tomorrow_beg = today + datetime.timedelta(days=1)
-	
+
 	# if it's not a Friday, check events for tomorrow only
 	lim_beg = tomorrow_beg.isoformat() + 'T00:00:00.00000Z'
 	lim_end = tomorrow_beg.isoformat() + 'T23:59:59.99999Z' # this is not really correct because it's assuming we're UTC
 	if now.weekday() == 4: # Friday
 		lim_end = tomorrow_beg + datetime.timedelta(days=6) #not just tomorrow, but the whole week!
 		lim_end = lim_end.isoformat() + 'T23:59:59.99999Z'
-		
+
 	eventsResult = serviceCal.events().list(
-		calendarId='primary', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
+		calendarId='ms91c3puq1l5fckj1rc4dn4clk@group.calendar.google.com', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
 		orderBy='startTime').execute()
 	events = eventsResult.get('items', [])
-	
+
 	if events:
 		serviceMail = discovery.build('gmail', 'v1', http=http)
 		for event in events:
