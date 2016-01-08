@@ -79,23 +79,23 @@ def CreateMessage(sender, to, subject, message_text):
 def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	t = datetime.datetime.strptime((start.split('+'))[0],"%Y-%m-%dT%H:%M:%S") #split off tz modifier: 2015-12-24T06:30:00>>>+01:00<<<
 	time = t.strftime('%H:%M')
-	date = t.strftime('%A %B %D')
+	date = t.strftime('%A %d %B')
 	subject_tag = date + ':' #
 	body_tag = 'Here is what is happening next week:\n\n'
 	dotorbang = '.'
-	if date == tomorrow.strftime('%A %B %D'):
+	if date == tomorrow.strftime('%A %d %B'):
 		subject_tag = 'Reminder: tomorrow'
-		body_tag = "Tomorrow in our LACG meeting:"
+		body_tag = "Tomorrow in the LACG meeting:\n\n"
 		dotorbang = '!'
 	if place != '':
 		place = 'Location: ' + place
-	if abstract != '':
-		abstract = "\nAbstract:\n\n" + abstract
+	#if abstract != '':
+		#abstract = "Abstract:\n\n" + abstract
 
 	sender = "Your friendly LACG mailbot"
 	recipient = WHERE_DOES_THE_MAIL_GO_TO
 	subject = subject_tag + ' ' + title
-	body = "Dear LACG members,\n\n" + body_tag + title + "\n\n" + place + ' at ' + time + "\n\n" + title + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
+	body = "Dear LACG members,\n\n" + body_tag + "Speaker: " + title + "\n\n" + place + '\n\nTime: ' + time + "\n\n" + abstract #+ "\n\nBest,\nBastien, Min, Yifei, and Cesko"
 
 	gmail_message = CreateMessage(sender,recipient,subject,body.encode('utf8'))
 	return SendMessage(serviceMail,'me',gmail_message)
@@ -112,7 +112,7 @@ def main():
 	# if it's not a Friday, check events for tomorrow only
 	lim_beg = tomorrow_beg.isoformat() + 'T00:00:00.00000Z'
 	lim_end = tomorrow_beg.isoformat() + 'T23:59:59.99999Z' # this is not really correct because it's assuming we're UTC
-	if now.weekday() == 4: # Friday
+	if now.weekday() == 5: # Friday
 		lim_end = tomorrow_beg + datetime.timedelta(days=6) #not just tomorrow, but the whole week!
 		lim_end = lim_end.isoformat() + 'T23:59:59.99999Z'
 
@@ -128,7 +128,7 @@ def main():
 			place = ''
 			abstract = ''
 			try:
-				place = ' in ' + event['location']
+				place = event['location']
 			except KeyError:
 				pass
 			try:

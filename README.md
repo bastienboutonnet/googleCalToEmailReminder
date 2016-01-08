@@ -9,4 +9,6 @@
 - implement crontab job on by computer
 - test out with some fake events.
 
-
+# What's needed?
+- install googleAPI following this doc: xxxxxxURLxxxxx
+	- make sure to also enable the google calendar API
