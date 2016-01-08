@@ -1,6 +1,5 @@
 # coding: utf8
 #!/usr/bin/python3
-from __future__ import unicode_literals
 
 SCOPES = [ 'https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/gmail.send' ]
 WHERE_DOES_THE_MAIL_GO_TO = "lacg@googlegroups.com"
@@ -121,6 +120,7 @@ def main():
 		calendarId='ms91c3puq1l5fckj1rc4dn4clk@group.calendar.google.com', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
 		orderBy='startTime').execute()
 	events = eventsResult.get('items', [])
+	
 
 	if events:
 		serviceMail = discovery.build('gmail', 'v1', http=http)
