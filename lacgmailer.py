@@ -1,4 +1,6 @@
+# coding: utf8
 #!/usr/bin/python3
+from __future__ import unicode_literals
 
 SCOPES = [ 'https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/gmail.send' ]
 WHERE_DOES_THE_MAIL_GO_TO = "lacg@googlegroups.com"
@@ -35,7 +37,7 @@ def get_credentials():
 	credentials = store.get()
 	if not credentials or credentials.invalid:
 		flow = client.flow_from_clientsecrets('client_secret.json',SCOPES)
-		flow.user_agent = 'Python LACG mailer'
+		flow.user_agent = 'pythonMailer'
 		credentials = tools.run_flow(flow,store,flags)
 		print 'Storing credentials to ' + credential_path
 	return credentials
@@ -80,7 +82,7 @@ def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	time = t.strftime('%H:%M')
 	date = t.strftime('%A %B %D')
 	subject_tag = date + ':' #
-	body_tag = 'Here is what is happening next week: '
+	body_tag = 'Here is what is happening next week:\n\n'
 	dotorbang = '.'
 	if date == tomorrow.strftime('%A %B %D'):
 		subject_tag = 'Reminder: tomorrow'
@@ -94,9 +96,9 @@ def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	sender = "Your friendly LACG mailbot"
 	recipient = WHERE_DOES_THE_MAIL_GO_TO
 	subject = subject_tag + ' ' + title
-	body = "Dear LACG members,\n\n" + body_tag + ' the following' + place + ' at ' + time + ' by ' + title + dotorbang + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
+	body = "Dear LACG members,\n\n" + body_tag + title + "\n\n" + place + ' at ' + time + "\n\n" + title + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
 
-	gmail_message = CreateMessage(sender,recipient,subject,body)
+	gmail_message = CreateMessage(sender,recipient,subject,body.encode('utf8'))
 	return SendMessage(serviceMail,'me',gmail_message)
 
 def main():

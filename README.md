@@ -4,7 +4,7 @@
 # Todo
 
 - implement subcalendar selection.X
-	- test out that it works.
+	- test out that it works.X
 - modify the formatting to the email
 - implement crontab job on by computer
 - test out with some fake events.
