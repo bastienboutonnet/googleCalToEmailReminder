@@ -79,22 +79,22 @@ def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	t = datetime.datetime.strptime((start.split('+'))[0],"%Y-%m-%dT%H:%M:%S") #split off tz modifier: 2015-12-24T06:30:00>>>+01:00<<<
 	time = t.strftime('%H:%M')
 	date = t.strftime('%A %B %D')
-	subject_tag = date + ':'
-	body_tag = 'On ' + date + ','
+	subject_tag = date + ':' #
+	body_tag = 'Here is what is happening next week: '
 	dotorbang = '.'
 	if date == tomorrow.strftime('%A %B %D'):
 		subject_tag = 'Reminder: tomorrow'
-		body_tag = "Don't forget that tomorrow"
+		body_tag = "Tomorrow in our LACG meeting:"
 		dotorbang = '!'
 	if place != '':
-		place = ' in ' + place
+		place = 'Location: ' + place
 	if abstract != '':
-		abstract = "\nThe abstract is below:\n\n" + abstract
+		abstract = "\nAbstract:\n\n" + abstract
 
 	sender = "Your friendly LACG mailbot"
 	recipient = WHERE_DOES_THE_MAIL_GO_TO
 	subject = subject_tag + ' ' + title
-	body = "Dear LACG members,\n\n" + body_tag + ' we will have a talk' + place + ' at ' + time + ' by ' + title + dotorbang + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
+	body = "Dear LACG members,\n\n" + body_tag + ' the following' + place + ' at ' + time + ' by ' + title + dotorbang + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
 
 	gmail_message = CreateMessage(sender,recipient,subject,body)
 	return SendMessage(serviceMail,'me',gmail_message)
