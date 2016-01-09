@@ -112,7 +112,7 @@ def main():
 	# if it's not a Friday, check events for tomorrow only
 	lim_beg = tomorrow_beg.isoformat() + 'T00:00:00.00000Z'
 	lim_end = tomorrow_beg.isoformat() + 'T23:59:59.99999Z' # this is not really correct because it's assuming we're UTC
-	if now.weekday() == 5: # Friday
+	if now.weekday() == 4: # Friday
 		lim_end = tomorrow_beg + datetime.timedelta(days=6) #not just tomorrow, but the whole week!
 		lim_end = lim_end.isoformat() + 'T23:59:59.99999Z'
 
