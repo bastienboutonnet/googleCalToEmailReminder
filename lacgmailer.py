@@ -1,3 +1,4 @@
+# coding: utf8
 #!/usr/bin/python3
 
 SCOPES = [ 'https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/gmail.send' ]
@@ -35,7 +36,7 @@ def get_credentials():
 	credentials = store.get()
 	if not credentials or credentials.invalid:
 		flow = client.flow_from_clientsecrets('client_secret.json',SCOPES)
-		flow.user_agent = 'Python LACG mailer'
+		flow.user_agent = 'pythonMailer'
 		credentials = tools.run_flow(flow,store,flags)
 		print 'Storing credentials to ' + credential_path
 	return credentials
@@ -54,7 +55,7 @@ def SendMessage(service, user_id, message):
 	"""
 	message = (service.users().messages().send(userId=user_id, body=message)
 						 .execute())
-	print 'Message Id: %s' % message['id']
+	#print 'Message Id: %s' % message['id']
 	return message
 
 def CreateMessage(sender, to, subject, message_text):
@@ -78,25 +79,25 @@ def CreateMessage(sender, to, subject, message_text):
 def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	t = datetime.datetime.strptime((start.split('+'))[0],"%Y-%m-%dT%H:%M:%S") #split off tz modifier: 2015-12-24T06:30:00>>>+01:00<<<
 	time = t.strftime('%H:%M')
-	date = t.strftime('%A %B %D')
-	subject_tag = date + ':'
-	body_tag = 'On ' + date + ','
+	date = t.strftime('%A %d %B')
+	subject_tag = date + ':' #
+	body_tag = 'Here is what is happening next week:\n\n'
 	dotorbang = '.'
-	if date == tomorrow.strftime('%A %B %D'):
+	if date == tomorrow.strftime('%A %d %B'):
 		subject_tag = 'Reminder: tomorrow'
-		body_tag = "Don't forget that tomorrow"
+		body_tag = "Tomorrow in the LACG meeting:\n\n"
 		dotorbang = '!'
 	if place != '':
-		place = ' in ' + place
-	if abstract != '':
-		abstract = "\nThe abstract is below:\n\n" + abstract
-	
+		place = 'Location: ' + place
+	#if abstract != '':
+		#abstract = "Abstract:\n\n" + abstract
+
 	sender = "Your friendly LACG mailbot"
 	recipient = WHERE_DOES_THE_MAIL_GO_TO
 	subject = subject_tag + ' ' + title
-	body = "Dear LACG members,\n\n" + body_tag + ' we will have a talk' + place + ' at ' + time + ' by ' + title + dotorbang + abstract + "\n\nBest,\nBastien, Min, Yifei, and Cesko"
-	
-	gmail_message = CreateMessage(sender,recipient,subject,body)
+	body = "Dear LACG members,\n\n" + body_tag + "Speaker: " + title + "\n\n" + place + '\n\nTime: ' + time + "\n\n" + abstract #+ "\n\nBest,\nBastien, Min, Yifei, and Cesko"
+
+	gmail_message = CreateMessage(sender,recipient,subject,body.encode('utf8'))
 	return SendMessage(serviceMail,'me',gmail_message)
 
 def main():
@@ -107,19 +108,19 @@ def main():
 	now = datetime.datetime.today()
 	today = datetime.date(now.year,now.month,now.day) #rounded down, i.e. 00:00 in the morning!
 	tomorrow_beg = today + datetime.timedelta(days=1)
-	
+
 	# if it's not a Friday, check events for tomorrow only
 	lim_beg = tomorrow_beg.isoformat() + 'T00:00:00.00000Z'
 	lim_end = tomorrow_beg.isoformat() + 'T23:59:59.99999Z' # this is not really correct because it's assuming we're UTC
 	if now.weekday() == 4: # Friday
 		lim_end = tomorrow_beg + datetime.timedelta(days=6) #not just tomorrow, but the whole week!
 		lim_end = lim_end.isoformat() + 'T23:59:59.99999Z'
-		
+
 	eventsResult = serviceCal.events().list(
-		calendarId='primary', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
+		calendarId='ms91c3puq1l5fckj1rc4dn4clk@group.calendar.google.com', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
 		orderBy='startTime').execute()
 	events = eventsResult.get('items', [])
-	
+
 	if events:
 		serviceMail = discovery.build('gmail', 'v1', http=http)
 		for event in events:
@@ -127,7 +128,7 @@ def main():
 			place = ''
 			abstract = ''
 			try:
-				place = ' in ' + event['location']
+				place = event['location']
 			except KeyError:
 				pass
 			try:
