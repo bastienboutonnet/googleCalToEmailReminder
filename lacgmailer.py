@@ -117,7 +117,7 @@ def main():
 		lim_end = lim_end.isoformat() + 'T23:59:59.99999Z'
 
 	eventsResult = serviceCal.events().list(
-		calendarId='ms91c3puq1l5fckj1rc4dn4clk@group.calendar.google.com', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
+		calendarId='519h3b02dq597bnm3m53ogeku8@group.calendar.google.com', timeMin=lim_beg, timeMax=lim_end, singleEvents=True,
 		orderBy='startTime').execute()
 	events = eventsResult.get('items', [])
 
