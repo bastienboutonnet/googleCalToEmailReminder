@@ -85,7 +85,7 @@ def send_email(serviceMail,tomorrow,start,place,title,abstract):
 	dotorbang = '.'
 	if date == tomorrow.strftime('%A %d %B'):
 		subject_tag = 'Reminder: tomorrow'
-		body_tag = "Tomorrow in the LACG meeting:\n\n"
+		body_tag = "In tomorrow's LACG meeting:\n\n"
 		dotorbang = '!'
 	if place != '':
 		place = 'Location: ' + place
